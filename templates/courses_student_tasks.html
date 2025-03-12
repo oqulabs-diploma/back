@@ -1,0 +1,140 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ request.LANGUAGE_CODE }}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{% trans "Tasks" %}</title>
+    <link href="/static/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/index3.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        table {
+          opacity: 1;
+          transition: opacity 0.5s ease;
+        }
+    </style>
+</head>
+
+<body>
+    {% load i18n %}
+    <nav class="navbar navbar-expand-md navbar-dark bg-primary fixed-top">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="navbar-brand py-0" href="/">
+                <img src="/static/casting_white.svg" alt="Logo" style="height: 30px;">
+            </a>
+            
+            <div class="d-flex align-items-center gap-3" id="navbarCollapse">
+                <form action="{% url 'set_language' %}" method="post" class="language-form" id="languageForm">
+                    {% csrf_token %}
+                    <select name="language" class="form-select bg-primary text-white border-0 shadow-sm" onchange="this.form.submit()">
+                        <option value="en" {% if request.LANGUAGE_CODE == 'en' %}selected{% endif %}>🇬🇧 {% trans "English" %}</option>
+                        <option value="ru" {% if request.LANGUAGE_CODE == 'ru' %}selected{% endif %}>🇷🇺 {% trans "Russian" %}</option>
+                        <option value="kk" {% if request.LANGUAGE_CODE == 'kk' %}selected{% endif %}>🇰🇿 {% trans "Kazakh" %}</option>
+                    </select>
+                </form>
+    
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <button type="button" class="btn border-0 shadow-sm">
+                            <a class="nav-link m-0 text-white" href="/courses">{% trans "Back" %}</a>
+                        </button>
+                        <button type="button" class="btn border-0 shadow-sm">
+                            <a class="nav-link m-0 text-white" href="/logout">{% trans "Log out" %}</a>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="center-640 pt-5 mt-5" style="display: flex; flex-direction: column">
+        <div class="top-right">
+            <p>{% trans "Username:" %} {{ user.username }}</p>
+            <p>{% trans "Course:" %} {{ course.name }}</p>
+        </div>
+        <div style="display: flex; justify-content: center">
+            {% if enrollment_tasks %}
+                <table class="table table-hover table-striped" id="main_table">
+                    <thead>
+                        <tr>
+                            <th scope="col">{% trans "N" %}
+                                <button type="button" class="btn btn-light btn-sm" onclick="reverseTableRows()">
+                                    <i class="bi bi-arrow-down-up"></i>
+                                </button>
+                            </th>
+                            <th>{% trans "Task" %}</th>
+                            <th>{% trans "Time" %}</th>
+                            <th>{% trans "Progress" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody id="main_tbody">
+                    {% for enrollment_task in enrollment_tasks %}
+                        <tr onclick="back_to_record_id({{ enrollment_task.id }})"
+                            style="cursor: pointer" >
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ enrollment_task.task.name }}
+                                {% if not enrollment_task.task.is_active_right_now %}
+                                    <span class="badge bg-danger">{% trans "Inactive" %}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ enrollment_task.total_time }}/<br>{{ enrollment_task.task.minimum_time }}</td>
+                            <td>{{ enrollment_task.progress }}
+                                <br>
+                                <progress id="file" max="100" value="{{ enrollment_task.progress_num }}"></progress>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div style="margin-top: 2em; background-color: whitesmoke; text-align: center; width: auto">
+                    {% trans "No tasks found" %}
+                </div>
+            {% endif %}
+        </div>
+        <div class="gap center"></div>
+    </div>
+
+    <script>
+      const csrfToken = '{{ csrf_token }}';
+      const currentLang = document.documentElement.lang || "en"; 
+      async function back_to_record_id(id) {
+        const response = await fetch(`/${currentLang}/enrollment_tasks/${id}/back_to_record/`, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': csrfToken
+          }
+        });
+        if (response.ok) {
+          window.location = `/track/${id}`
+        } else {
+          alert(await response.text());
+        }
+      }
+
+      let reversed = false;
+
+      const reverseTableRows = () => {
+        const tbody = document.getElementById('main_tbody');
+        const rows = Array.from(tbody.rows);
+        tbody.style.transition = "opacity 0.5s ease";
+        tbody.style.opacity = "0";
+        setTimeout(() => {
+            rows.reverse();
+            rows.forEach(row => tbody.appendChild(row));
+            reversed = !reversed;
+            localStorage.setItem('reversed', reversed);
+            tbody.style.opacity = "1";
+        }, 500);
+      }
+
+      if (localStorage.getItem('reversed')) {
+        if (localStorage.getItem('reversed') === 'true') {
+          reverseTableRows();
+        }
+      }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,267 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-03 16:33+0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+
+#: app/courses_view.py:21 templates/courses_student.html:8
+#, fuzzy
+#| msgid "Course:"
+msgid "Courses"
+msgstr "Курстар"
+
+#: app/courses_view.py:22 app/courses_view.py:72
+#: templates/courses_student.html:137 templates/courses_student_tasks.html:53
+msgid "Username:"
+msgstr "Пайдаланушы аты:"
+
+#: app/courses_view.py:23 templates/courses_student.html:138
+msgid "Your courses"
+msgstr "Сіздің курстарыңыз"
+
+#: app/courses_view.py:24 templates/courses_student.html:161
+msgid "Work"
+msgstr "Жұмыс"
+
+#: app/courses_view.py:25 templates/courses_student.html:168
+msgid "No courses found, consider creating one"
+msgstr "Курстар табылмады, жасауды қарастырыңыз"
+
+#: app/courses_view.py:26 templates/courses_student.html:176
+msgid "Enroll to a course"
+msgstr "Курсқа жазылу"
+
+#: app/courses_view.py:27 templates/courses_student.html:152
+msgid "Total odo:"
+msgstr "Жалпы одо:"
+
+#: app/courses_view.py:28 templates/courses_student.html:154
+msgid "Ban:"
+msgstr "Бұғаттау:"
+
+#: app/courses_view.py:70 templates/courses_student_tasks.html:7
+msgid "Tasks"
+msgstr "Тапсырма:"
+
+#: app/courses_view.py:71 app/enrollments_view.py:66
+#: templates/courses_student_tasks.html:54 templates/student.html:142
+msgid "Course:"
+msgstr "Курс:"
+
+#: app/courses_view.py:73 templates/courses_student_tasks.html:66
+msgid "Task"
+msgstr "Тапсырма"
+
+#: app/courses_view.py:74 templates/courses_student_tasks.html:67
+msgid "Time"
+msgstr "Уақыт"
+
+#: app/courses_view.py:75 templates/courses_student_tasks.html:68
+msgid "Progress"
+msgstr "Прогресс"
+
+#: app/courses_view.py:76 app/enrollments_view.py:71
+#: templates/courses_student_tasks.html:78 templates/student.html:153
+msgid "Inactive"
+msgstr "Белсенді емес"
+
+#: app/courses_view.py:77 templates/courses_student_tasks.html:92
+msgid "No tasks found"
+msgstr "Тапсырмалар табылмады"
+
+#: app/enrollments_view.py:62 templates/courses_student_tasks.html:40
+#: templates/review.html:145 templates/student.html:117
+msgid "Back"
+msgstr "Артқа"
+
+#: app/enrollments_view.py:63 templates/courses_student.html:127
+#: templates/courses_student_tasks.html:43 templates/review.html:148
+#: templates/student.html:120
+msgid "Log out"
+msgstr "Шығу"
+
+#: app/enrollments_view.py:64 templates/student.html:130
+msgid "Task Monitoring"
+msgstr "Тапсырманы бақылау"
+
+#: app/enrollments_view.py:65
+msgid "INTERNET ERROR!"
+msgstr "ИНТЕРНЕТ ҚАТЕСІ!"
+
+#: app/enrollments_view.py:67 templates/student.html:143
+msgid "Task:"
+msgstr "Тапсырма:"
+
+#: app/enrollments_view.py:68 templates/student.html:144
+msgid "Student:"
+msgstr "Студент:"
+
+#: app/enrollments_view.py:69 templates/student.html:145
+msgid "This task:"
+msgstr "Осы тапсырма:"
+
+#: app/enrollments_view.py:70 templates/student.html:147
+msgid "Total:"
+msgstr "Жалпы:"
+
+#: app/enrollments_view.py:72 templates/student.html:159
+msgid "Share Screen"
+msgstr "Экранды бөлісу"
+
+#: app/enrollments_view.py:73 templates/student.html:165
+msgid "Share Camera"
+msgstr "Камераны бөлісу"
+
+#: app/enrollments_view.py:74 templates/student.html:172
+msgid "Stop Sharing"
+msgstr "Бөлісуді тоқтату"
+
+#: app/enrollments_view.py:75 templates/student.html:177
+msgid "Instructions"
+msgstr "Нұсқаулар"
+
+#: app/enrollments_view.py:76 templates/student.html:180
+msgid "You have to finish this task before the deadline:"
+msgstr "Сіз бұл тапсырманы мерзімінен бұрын аяқтауыңыз керек:"
+
+#: app/enrollments_view.py:77 templates/student.html:182
+msgid "You won't be able to submit your work after the deadline."
+msgstr "Мерзімнен кейін жұмысыңызды тапсыра алмайсыз."
+
+#: app/enrollments_view.py:78 templates/student.html:196
+msgid "Send Images"
+msgstr "Суреттерді жіберу"
+
+#: sms/settings.py:159 templates/courses_student_tasks.html:33
+#: templates/review.html:138 templates/student.html:110
+msgid "Kazakh"
+msgstr "Қазақша"
+
+#: sms/settings.py:160 templates/courses_student_tasks.html:31
+#: templates/review.html:136 templates/student.html:108
+msgid "English"
+msgstr "Ағылшынша"
+
+#: sms/settings.py:161 templates/courses_student_tasks.html:32
+#: templates/review.html:137 templates/student.html:109
+msgid "Russian"
+msgstr "Орысша"
+
+#: templates/courses_student_tasks.html:61
+msgid "N"
+msgstr ""
+
+#: templates/enroll.html:8 templates/enroll.html:19
+msgid "Enroll to course"
+msgstr "Курсқа тіркелу"
+
+#: templates/enroll.html:23
+msgid "Enrollment Code"
+msgstr "Курсқа тіркелу құпия сөзі"
+
+#: templates/enroll.html:34
+msgid "Please make sure you are at the right server. Currently, you are at"
+msgstr "Дұрыс серверде екеніңізге көз жеткізіңіз. Қазіргі уақытта сіз"
+
+#: templates/enroll.html:41
+msgid "Enroll"
+msgstr "Тіркелу"
+
+#: templates/enroll.html:47
+msgid "Ask your teacher for the enrollment code."
+msgstr "Тіркелу құпия сөзін мұғаліміңізден сұраңыз."
+
+msgid "Check your images before sending"
+msgstr "Суреттеріңізді жібермес бұрын тексеріңіз"
+
+msgid "Instructions for Working with Screenshots"
+msgstr "Скриншоттармен жұмыс істеу бойынша нұсқаулық"
+
+msgid "Viewing Screenshots:"
+msgstr "Скриншоттарды қарау:"
+
+msgid ""
+"Use the player located on the left side of the screen to carefully review "
+"all the screenshots of your work."
+msgstr ""
+"Жұмысыңыздың барлық скриншоттарын мұқият қарау үшін экранның сол жағында "
+"орналасқан ойнатқышты пайдаланыңыз."
+
+msgid "Selecting Relevant Images:"
+msgstr "Қажетті суреттерді таңдау:"
+
+msgid "Keep only those screenshots that accurately reflect the completed work."
+msgstr "Тек орындалған жұмысты дәл көрсететін скриншоттарды қалдырыңыз."
+
+msgid "Deleting Unnecessary Screenshots:"
+msgstr "Қажетсіз скриншоттарды жою:"
+
+msgid "Remove unwanted images using the Delete button."
+msgstr "\"Жою\" батырмасын пайдаланып қажетсіз суреттерді өшіріңіз."
+
+msgid "Attaching the Work File:"
+msgstr "Жұмыс файлын тіркеу:"
+
+msgid ""
+"If required, attach the file containing your completed work using the "
+"provided form."
+msgstr ""
+"Қажет болған жағдайда, дайын жұмысыңыз бар файлды берілген форма арқылы тіркеңіз."
+
+msgid "Sending the Completed Work:"
+msgstr "Дайын жұмысты жіберу:"
+
+msgid ""
+"After making your selections, be sure to send your work by clicking the "
+"Share Work button."
+msgstr ""
+"Таңдауыңызды жасағаннан кейін, \"Жұмысты жіберу\" батырмасын басу арқылы "
+"жұмысыңызды жіберуді ұмытпаңыз."
+
+msgid "Upload File"
+msgstr "Файлды жүктеу"
+
+msgid "You can't attach files right now, deadline is over"
+msgstr "Қазір файлдарды тіркеу мүмкін емес, соңғы мерзім өтті"
+
+msgid "Uploading file"
+msgstr "Файл жүктелуде"
+
+msgid "Download:"
+msgstr "Жүктеу:"
+
+msgid "Delete"
+msgstr "Жою"
+
+msgid "Continue working"
+msgstr "Жұмысты жалғастыру"
+
+#: templates/review.html:198
+msgid "Share work"
+msgstr "Экранмен бөлісу"
+
+#~ msgid "Change"
+#~ msgstr "Өзгерту"
+
+#~ msgid "Change Language"
+#~ msgstr "Тілді өзгерту"
+
+#~ msgid "Student Dashboard"
+#~ msgstr "Студенттің панелі"
+
+#~ msgid "Welcome to your dashboard!"
+#~ msgstr "Қош келдіңіз!"

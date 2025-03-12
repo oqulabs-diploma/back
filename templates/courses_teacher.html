@@ -1,0 +1,38 @@
+{% extends "main.html" %}
+{% block title %}Your Courses{% endblock %}
+{% block content %}
+    <div class="">
+{#        <div class="card-header">#}
+            <h1 style="text-align: center">Your Courses</h1>
+{#        </div>#}
+        <div class="gap center">
+            <span>Total time: {{ total_time_tracked }}</span>
+        </div>
+        {% if total_ai_screenshots > 0 %}
+        <div class="gap center">
+            <span>Total screenshots processed by AI: {{ total_ai_screenshots }}</span>
+        </div>
+        {% endif %}
+
+        <div class="many-cards">
+            {% for course in all_courses %}
+                {% include "courses_teacher_card.html" %}
+            {% empty %}
+                <div style="background-color: #f8f9fa; text-align: center; padding: 20px;">
+                    No courses found. Consider creating one.
+                </div>
+            {% endfor %}
+        </div>
+        <div class="gap center">
+            <a href="/courses_teacher/add" class="btn btn-success mt-3">
+                <i class="bi bi-plus"></i>
+                Add a course
+            </a>
+        </div>
+
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

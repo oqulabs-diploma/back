@@ -1,0 +1,27 @@
+<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer circle -->
+  <circle cx="100" cy="100" r="95" stroke="black" stroke-width="10" fill-opacity="0" />
+
+  <!-- Clock hands -->
+  <line x1="100" y1="100" x2="100" y2="40" stroke="black" stroke-width="10" />
+  <line x1="100" y1="100" x2="150" y2="100" stroke="black" stroke-width="10" />
+  <circle cx="100" cy="100" r="3" stroke="black" stroke-width="15" fill="black" />
+
+  <!-- Text "OquLabs" -->
+  <text x="40" y="135" font-family="Arial" font-size="30" fill="black">OquLabs</text>
+
+  <!-- Inner circle for design -->
+  <circle cx="100" cy="100" r="70" stroke="grey" stroke-width="2" fill="none" />
+
+  <!-- Decorative elements: Small squares around the clock -->
+  <rect x="95" y="10" width="10" height="10" fill="black" />
+  <rect x="175" y="95" width="10" height="10" fill="black" />
+  <rect x="95" y="180" width="10" height="10" fill="black" />
+  <rect x="15" y="95" width="10" height="10" fill="black" />
+
+  <!-- Decorative lines -->
+  <line x1="100" y1="10" x2="100" y2="30" stroke="black" stroke-width="2" />
+  <line x1="190" y1="100" x2="170" y2="100" stroke="black" stroke-width="2" />
+  <line x1="100" y1="170" x2="100" y2="190" stroke="black" stroke-width="2" />
+  <line x1="10" y1="100" x2="30" y2="100" stroke="black" stroke-width="2" />
+</svg>

@@ -1,0 +1,40 @@
+upstream oqulabs_server {
+  server unix:/var/www/oqulabs/oqulabs.sock fail_timeout=0;
+}
+
+server {
+    server_name .oqulabs.kz;
+
+    client_max_body_size 4G;
+
+    access_log /var/www/oqulabs/nginx-access.log;
+    error_log /var/www/oqulabs/nginx-error.log;
+
+    location /screenshots/ {
+        alias /var/www/oqulabs/screenshots/;
+    }
+
+    location /attachments/ {
+        alias /var/www/oqulabs/attachments/;
+    }
+
+    location /static/ {
+        alias /var/www/oqulabs/static/;
+    }
+
+    location / {
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+        # don't cache it
+        proxy_no_cache 1;
+        # even if cached, don't try to use it
+        proxy_cache_bypass 1; 
+        if (!-f $request_filename) {
+            proxy_pass http://oqulabs_server;
+            break;
+        }
+    }
+
+    listen 80; # managed by Certbot
+}

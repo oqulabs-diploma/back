@@ -1,0 +1,85 @@
+{% extends "main.html" %}
+{% block title %}Student Details{% endblock %}
+{% block content %}
+<div  style="display: flex; flex-direction: column">
+    <div class="top-right">
+        <p>Student: {{ enrollment.student.first_name }} {{ enrollment.student.last_name }}</p>
+        <p>Username: {{ enrollment.student.username }}</p>
+        <p>Course: {{ enrollment.course.name }}</p>
+    </div>
+    <div>
+        <button class="btn btn-info"
+                onclick="check_with_ai('enrollment', {{ enrollment.id }})"
+                style="margin-bottom: 1em"
+        >
+            <i class="bi bi-magic"></i>
+            Check ALL with AI
+        </button>
+    </div>
+    <tr style="display: flex; justify-content: center">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Task</th>
+                <th>Time Worked</th>
+{#                <th>Banned</th>#}
+                <th>Status</th>
+                <th>AI</th>
+                <th></th>
+            </tr>
+            </thead>
+        {% for enrollment_task in enrollment_tasks %}
+        
+            <tr>
+
+                <td>{{ enrollment_task.task.name }}</td>
+                <td>{{ enrollment_task.total_time }}<br>
+                    <progress value="{{ enrollment_task.progress_num }}" max="100"></progress>
+                </td>
+{#                <td>{% if enrollment_task.ban_minutes != 0 %}{{ enrollment_task.total_time_ban }}{% endif %}</td>#}
+                <td>{{ enrollment_task.progress }}</td>
+                <td>
+                    {% if enrollment_task.ai_request %}
+                        <i class="bi bi-magic" style="color: green"></i>
+                        {% if enrollment_task.ai_ready %}
+                            <span class="hover-box">
+                                {{ enrollment_task.ai_score }}
+                                <div class="hover-text">{{ enrollment_task.ai_note }}</div>
+                            </span>
+                        {% else %}
+                            <span><i class="bi bi-arrow-repeat" style="color: green"></i></span>
+                        {% endif %}
+                    {% else %}
+                        <button class="btn btn-sm btn-info"
+                                onclick="check_with_ai('enrollment_task',{{ enrollment_task.id }})">
+                            <i class="bi bi-magic"></i> Check
+                        </button>
+                    {% endif %}
+                </td>
+                {% if enrollment_task.last_shared_id > 0  %}
+                <td><a href="/watch/{{ enrollment_task.id }}" class="btn btn-sm
+                {% if enrollment_task.watched %}
+                btn-info
+                {% else %}
+                btn-primary
+                {% endif %}
+                ">
+                    <i class="bi bi-eye"></i>
+                    Watch
+                {% if enrollment_task.watched %}
+                    <i class="bi bi-check-all"></i>
+                {% endif %}
+                </a></td>
+                {% else %}
+                <td></td>
+                {%endif %}
+            </tr>
+        {% empty %}
+            <div style="margin-top: 2em; background-color: whitesmoke; text-align: center; width: auto">
+                The student did not work on this course yet.
+            </div>
+        {% endfor %}
+        </table>
+</div>
+
+{% endblock %}

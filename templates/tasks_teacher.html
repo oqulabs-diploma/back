@@ -1,0 +1,135 @@
+{% extends "main.html" %}
+{% block title %}Tasks{% endblock %}
+{% block content %}
+<!-- Modal -->
+<div class="modal fade" id="copyTaskModal" tabindex="-1" aria-labelledby="copyTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="copyTaskModalLabel">Copy Task to Another Courses</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="/copy_task" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="task_id" value="">
+                    <div class="mb-3">
+                        <label for="course" class="form-label">Choose Courses to copy this task to...</label>
+                        <div class="btn-group-vertical" role="group" aria-label="Basic checkbox toggle button group">
+                        {% for course in other_courses %}
+                            <div class="form-check form-check-inline" id="div_course_{{ course.id }}">
+                                <input class="btn-check" autocomplete="off" type="checkbox" name="select_course_{{ course.id }}"
+                                       id="select_course_{{ course.id }}">
+                                <label class="btn btn-outline-primary"
+                                       for="select_course_{{ course.id }}">{{ course.name }}</label>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Copy</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div style="display: flex; flex-direction: column">
+    <div class="top-right">
+        <p >{{ course.name }} </p>
+    </div>
+    <div class="gap center pb-5">
+        <button class="btn btn-primary btn-sm" onclick="window.location.href='/add_task/{{ course.id }}'">+ Add a Task</button>
+    </div>
+
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th scope="col">N</th>
+            <th scope="col">Task</th>
+            <th scope="col">Minimum Time</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        {% for task in tasks %}
+            <tr>
+                <td>{{ task.order }}</td>
+                <td>{{ task.name }}
+                    {% if task.copy_of %}
+                        <span class="badge bg-info"
+                              onclick="window.location.href='/courses_teacher/{{ task.copy_of.course.id }}/tasks'"
+                        >Copy of {{ task.copy_of.course }}</span>
+                    {% endif %}
+                    {% if not task.is_active_right_now %}
+                        <span class="badge bg-danger">Inactive</span>
+                    {% endif %}
+
+                </td>
+                <td>{{ task.minimum_time }}</td>
+                <td>
+                    <button style="min-width: 5ch"
+                            class="btn btn-primary btn-sm btn-light" onclick="window.location.href='/edit_task/{{ task.id }}'">
+                        <i class="bi bi-pencil-square"></i>
+                    </button>
+                    {% if forloop.counter > 1 %}
+                        <button style="min-width: 5ch"
+                                class="btn btn-primary btn-sm btn-light" onclick="window.location.href='/move_task_up/{{ task.id }}'">
+                            <i class="bi bi-arrow-up-square"></i>
+                        </button>
+                    {% else %}
+                        <button style="min-width: 5ch"
+                                class="btn btn-primary btn-sm btn-light" style="visibility: hidden">
+                            <i class="bi bi-arrow-up-square"></i>
+                        </button>
+                    {% endif %}
+                    {% if not task.copy_of %}
+                        <button class="btn btn-primary btn-sm btn-light"
+                                style="min-width: 5ch"
+                                onclick="copy_task({{ task.id }})">
+                            <i class="bi bi-copy"></i>
+                        </button>
+                    {% else %}
+                        <button class="btn btn-primary btn-sm btn-light"
+                                style="min-width: 12ch"
+                                onclick="remove_copy({{ task.id }})">
+                            <i class="bi bi-node-plus"></i>
+                            Duplicate
+                        </button>
+                    {% endif %}
+                        <a href="/watch_by_task/{{ task.id }}" class="btn btn-sm
+                        {% if task.watched %}
+                        btn-info
+                        {% else %}
+                        btn-primary
+                        {% endif %}
+                        "
+                               style="margin-left: auto"
+                        > <i class="bi bi-eye"></i>
+                            Watch
+                        {% if task.watched %}
+                            <i class="bi bi-check-all"></i>
+                        {% endif %}
+                        </a>
+                </td>
+            </tr>
+        {% empty %}
+            <div style="margin-top: 2em; background-color: whitesmoke; text-align: center; width: auto">
+                There are no tasks yet, add one!
+            </div>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+    const copy_task = async (task_id) => {
+        const myModal = new bootstrap.Modal(document.getElementById('copyTaskModal'))
+        myModal.show();
+        // set task id
+        const task_input = document.querySelector('input[name="task_id"]');
+        task_input.value = task_id;
+    }
+    const remove_copy = async (task_id) => {
+        if (confirm('This task will be duplicated and will no longer be a copy of another task. Are you sure?'))
+            window.location.href = `/remove_copy/${task_id}`;
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,6 @@
+[webservers]
+almau.oqulabs.kz ansible_user=timurbakibayev
+narxoz.oqulabs.kz ansible_user=azureuser
+astanahub.oqulabs.kz ansible_user=azureuser
+aitu.oqulabs.kz ansible_user=timurbakibayev
+main.oqulabs.kz ansible_user=root

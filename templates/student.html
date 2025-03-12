@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link href="/static/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/index3.css" rel="stylesheet">
+    <title>OquLabs</title>
+    <style>
+
+        @keyframes blinker {
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .blink-error-message {
+            animation: blinker 1s linear infinite;
+            color: red;
+            text-align: center;
+            font-size: 1.5em;
+            background-color: #f8d7da;
+            display: none;
+        }
+
+        .paper-with-shadow {
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            transition: 0.3s;
+            border-radius: 5px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .float-top-right-of-the-screen {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+
+        .timebar {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-items: center;
+            width: 100%;
+            padding: 0.5rem;
+        }
+
+        .timebar_element {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+            padding: 0.5rem;
+            font-size: 0.5em;
+        }
+
+        .center-640 {
+            max-width: 640px;
+            margin: auto;
+        }
+
+        .timebar_element_selected {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .top-right {
+            margin-left: auto;
+            margin-bottom: 1em;
+            font-family: monospace;
+        }
+
+        .top-right p {
+            margin: 0;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            padding-top: 80px;
+        }
+
+        .files {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+  {% load i18n %}
+  <nav class="navbar navbar-expand-md navbar-dark bg-primary fixed-top">
+    <div class="container d-flex justify-content-between align-items-center">
+        <a class="navbar-brand py-0" href="/">
+            <img src="/static/casting_white.svg" alt="Logo" style="height: 30px;">
+        </a>
+        
+        <div class="d-flex align-items-center gap-3" id="navbarCollapse">
+            <form action="{% url 'set_language' %}" method="post" class="language-form" id="languageForm">
+                {% csrf_token %}
+                <select name="language" class="form-select bg-primary text-white border-0 shadow-sm" onchange="this.form.submit()">
+                    <option value="en" {% if request.LANGUAGE_CODE == 'en' %}selected{% endif %}>🇬🇧 {% trans "English" %}</option>
+                    <option value="ru" {% if request.LANGUAGE_CODE == 'ru' %}selected{% endif %}>🇷🇺 {% trans "Russian" %}</option>
+                    <option value="kk" {% if request.LANGUAGE_CODE == 'kk' %}selected{% endif %}>🇰🇿 {% trans "Kazakh" %}</option>
+                </select>
+            </form>
+
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <button type="button" class="btn border-0 shadow-sm">
+                      <a class="nav-link m-0" href="/courses/{{ enrollment.course.id }}">{% trans "Back" %}</a>
+                    </button>
+                    <button type="button" class="btn border-0 shadow-sm">
+                        <a class="nav-link m-0 text-white" href="/logout">{% trans "Log out" %}</a>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="center-640 mt-5 pt-0">
+    <audio id="errorBeep" src="/static/sound93.wav" preload="auto"></audio>
+    <h1 class="text-center">{% trans "Task Monitoring" %}</h1>
+    <div class="blink-error-message" id="error_message">INTERNET ERROR!</div>
+    <div style="display: flex; flex-direction: row; margin-top: 2em;">
+        <div style="flex: 0.5; border: 1px solid #dee2e6; padding: 10px;display: block; text-align: center">
+            <div id="screen_capture"
+                 style="height: 100%; width: 100%; cursor: pointer; display: none"
+            >
+                <video id="video" style="width: 100%" autoplay></video>
+            </div>
+        </div>
+        <div style="flex: 0.5; border: 1px solid #dee2e6;">
+            <div class="top-right" style="margin: 10px;">
+                <p>{% trans "Course:"%} {{ enrollment.course.name }}</p>
+                <p>{% trans "Task:" %} {{ enrollment_task.task.name }}</p>
+                <p>{% trans "Student:" %} {{ enrollment.student.first_name }} {{ enrollment.student.last_name }}</p>
+                <p>{% trans "This task:" %} <span id="minutes_task">{{ enrollment_task.total_time }} / {{ task.minimum_time }}</span>
+                </p>
+                <p>{% trans "Total:" %} <span id="total_minutes">{{ enrollment.total_time }}</span></p>
+            </div>
+        </div>
+    </div>
+    <div style="display: flex; flex-direction: row; margin-top: 1em;">
+        {% if not enrollment_task.task.is_active_right_now %}
+            <span class="badge bg-danger" style="font-size: 1em">{% trans "Inactive" %}</span>
+        {% else %}
+            <button class="btn btn-info"
+                    onclick="startStopRecorder('screen')"
+                    id="shareScreen"
+            >
+            {% trans "Share Screen" %}
+            </button>
+            <button class="btn btn-info" style="margin-left: 2em"
+                    onclick="startStopRecorder('camera')"
+                    id="shareCamera"
+            >
+            {% trans "Share Camera" %}
+            </button>
+        {% endif %}
+        <button class="btn btn-danger" style="margin-left: auto; display: none"
+                onclick="startStopRecorder('stop'); send_screenshots()"
+                id="shareStop"
+        >
+        {% trans "Stop Sharing" %}
+        </button>
+    </div>
+
+    <div class="paper-with-shadow" style="margin-top: 1em;">
+        <h2>{% trans "Instructions" %}</h2>
+        {{ instructions | safe }}
+        {% if enrollment_task.task.available_to %}
+            <p class="text-danger">{% trans  "You have to finish this task before the deadline:" %}
+                {{ enrollment_task.task.available_to }}</p>
+            <p>{% trans "You won't be able to submit your work after the deadline." %}</p>
+        {% endif %}
+        <div class="files">
+            {% for attachment in attachments %}
+                <div style="margin:0.5em">
+                    <a class="btn btn-outline-success" download=""
+                       href="{{ attachment.attachment }}">{{ attachment.filename }}</a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; margin-top: 2em;">
+        <div id="action_buttons" style="display: flex; flex-direction: row;">
+            <button id="confirmButton" class="btn btn-success" onclick="send_screenshots()"> {% trans "Send Images" %}</button>
+        </div>
+        <div id="errors" style="color: red; font-size: 1em;"></div>
+    </div>
+</div>
+<script>
+  const currentLang = document.documentElement.lang || "en"; 
+  const screen_capture = document.getElementById('screen_capture');
+  let captureInterval;
+  const errors = document.getElementById('errors');
+  const share_screen = document.getElementById('shareScreen');
+  const share_camera = document.getElementById('shareCamera');
+  const share_stop = document.getElementById('shareStop');
+  const enrollment_id = {{ enrollment.id }};
+  let screenshots = [
+    {% for screenshot in screenshots %}
+      {
+        id: {{ screenshot.id }},
+        image_url: "/{{ screenshot.screenshot }}",
+        at_minute: "{{ screenshot.time }}",
+        created_at: "{{ screenshot.created_at }}"
+      },
+    {% endfor %}
+  ];
+  const action_buttons = document.getElementById('action_buttons');
+  const current_img = document.getElementById('current_img');
+  const current_at_minute = document.getElementById('current_at_minute');
+  const current_created_at = document.getElementById('current_created_at');
+  const confirmButton = document.getElementById('confirmButton');
+  let recording = false;
+  let recordingSource = null;
+  let captureStream;
+  let screenshotCount = 0;
+
+  async function stopTracks(no_beep = false) {
+    if (captureStream) {
+      captureStream.getTracks().forEach(track => track.stop());
+    }
+    screen_capture.style.display = 'none';
+    recording = false;
+    share_camera.style.display = 'block';
+    share_screen.style.display = 'block';
+    share_stop.style.display = 'none';
+    action_buttons.style.display = 'block';
+  }
+
+  const send_screenshots = async () => {
+    if (screenshots.length === 0 && screenshotCount === 0) {
+      alert('You have to work first');
+      return;
+    }
+    const response = await fetch(`/${currentLang}/enrollment_tasks/{{ enrollment_task.id }}/mark_as_done/`, {
+      method: 'POST',
+    });
+    if (response.ok) {
+      window.location.reload();
+    } else {
+      const text = await response.text();
+      alert(text);
+    }
+  }
+
+  let previousImageData = null;
+
+  function createHashMatrix(imageData, gridSize = 20) {
+    const hashMatrix = [];
+    const squareWidth = Math.floor(imageData.width / gridSize);
+    const squareHeight = Math.floor(imageData.height / gridSize);
+
+    let maxPixelIndex = 0;
+    for (let y = 0; y < gridSize; y++) {
+      const row = [];
+      for (let x = 0; x < gridSize; x++) {
+        let rSum = 0, gSum = 0, bSum = 0, pixelCount = 0;
+
+
+        for (let dy = 0; dy < squareHeight; dy++) {
+          for (let dx = 0; dx < squareWidth; dx++) {
+            const pixelX = x * squareWidth + dx;
+            const pixelY = y * squareHeight + dy;
+            const pixelIndex = (pixelY * imageData.width + pixelX) * 4;
+            maxPixelIndex = Math.max(maxPixelIndex, pixelIndex);
+            if (pixelX > imageData.width && pixelY > imageData.height) {
+              console.log('Out of bounds:', pixelX, pixelY);
+            }
+
+            rSum += imageData.data[pixelIndex];     // Red
+            gSum += imageData.data[pixelIndex + 1]; // Green
+            bSum += imageData.data[pixelIndex + 2]; // Blue
+            pixelCount++;
+          }
+        }
+
+        // round up sums with div 10
+        rSum = Math.floor(rSum / 10);
+        gSum = Math.floor(gSum / 10);
+        bSum = Math.floor(bSum / 10);
+
+        // Compute the average color for the square
+        const avgR = Math.floor(rSum / pixelCount);
+        const avgG = Math.floor(gSum / pixelCount);
+        const avgB = Math.floor(bSum / pixelCount);
+
+        // Store a simple hash (e.g., concatenated RGB values)
+        row.push(`${avgR}-${avgG}-${avgB}`);
+      }
+      hashMatrix.push(row);
+    }
+
+    console.log("maxPixelIndex", maxPixelIndex)
+    console.log("imageData.data", imageData.data.length)
+
+
+    return hashMatrix;
+  }
+
+  function areImagesSimilar(imageData1, imageData2) {
+    const gridSize = 10;
+    const hashmatrix1 = createHashMatrix(imageData1, gridSize);
+    const hashmatrix2 = createHashMatrix(imageData2, gridSize);
+    {#console.log(hashmatrix1);#}
+    {#console.log(hashmatrix2);#}
+    let differentSquares = 0;
+    for (let y = 0; y < hashmatrix1.length; y++) {
+      let diffStr = '';
+      for (let x = 0; x < hashmatrix1[y].length; x++) {
+        if (hashmatrix1[y][x] !== hashmatrix2[y][x]) {
+          differentSquares++;
+          diffStr += 'X';
+        } else {
+          diffStr += '-';
+        }
+      }
+      console.log(y, diffStr);
+    }
+    console.log(differentSquares, differentSquares / (gridSize * gridSize));
+    return false; // Disable image similarity check
+    let similarityThreshold = 0.97;
+    if (recordingSource === 'camera') {
+      similarityThreshold = 0.6;
+    }
+    if (imageData1.width !== imageData2.width || imageData1.height !== imageData2.height) {
+      return false;
+    }
+
+    const data1 = imageData1.data;
+    const data2 = imageData2.data;
+    let similarPixelCount = 0;
+
+    for (let i = 0; i < data1.length; i += 4) {
+      if (Math.abs(data1[i] - data2[i]) < 150 &&  // Red
+        Math.abs(data1[i + 1] - data2[i + 1]) < 5 &&  // Green
+        Math.abs(data1[i + 2] - data2[i + 2]) < 5 &&  // Blue
+        Math.abs(data1[i + 3] - data2[i + 3]) < 5) {  // Alpha
+        similarPixelCount++;
+      }
+    }
+
+    const totalPixels = imageData1.width * imageData1.height;
+    const similarity = similarPixelCount / totalPixels;
+
+    return similarity >= similarityThreshold;
+  }
+
+  async function captureScreen(checking = false) {
+    return new Promise((resolve, reject) => {
+      if (!recording && !checking) {
+        return resolve(false);
+      }
+      const video = document.getElementById('video');
+      const originalCanvas = document.createElement('canvas');
+      originalCanvas.width = video.videoWidth;
+      originalCanvas.height = video.videoHeight;
+      const originalCtx = originalCanvas.getContext('2d');
+      originalCtx.drawImage(video, 0, 0, originalCanvas.width, originalCanvas.height);
+      const currentImageData = originalCtx.getImageData(0, 0, originalCanvas.width, originalCanvas.height);
+
+      const targetWidth = originalCanvas.width / 2;
+      const targetHeight = originalCanvas.height / 2;
+      const resizedCanvas = document.createElement('canvas');
+      resizedCanvas.width = targetWidth;
+      resizedCanvas.height = targetHeight;
+      const resizedCtx = resizedCanvas.getContext('2d');
+      resizedCtx.drawImage(originalCanvas, 0, 0, targetWidth, targetHeight);
+
+      if (previousImageData && areImagesSimilar(previousImageData, currentImageData)) {
+        return resolve(false);
+      }
+
+      previousImageData = currentImageData;
+
+      resizedCanvas.toBlob(blob => {
+        const formData = new FormData();
+        formData.append('screenshot', blob, `screenshot-${Date.now()}.png`);
+        formData.append('enrollment_id', enrollment_id);
+        fetch(`/${currentLang}/upload/{{ enrollment_task.task.id }}/`, {
+          method: 'POST',
+          body: formData,
+        }).then(response => {
+          if (response.ok) {
+            response.text().then(text => {
+              const data = JSON.parse(text);
+              const total_minutes = data['total_minutes'] * 1;
+              const total_time = `${Math.floor(total_minutes / 60)}:${total_minutes % 60}`;
+              const minutes_task = data['minutes_task'] * 1;
+              const today_time = `${Math.floor(minutes_task / 60)}:${minutes_task % 60}`;
+              document.getElementById('total_minutes').innerText = total_time;
+              document.getElementById('minutes_task').innerText = `${today_time} / {{ task.minimum_time }}`;
+
+              screenshotCount++; // Increment screenshot count
+
+              resolve(true);
+            });
+          } else {
+            console.error('Recording upload failed:', response.statusText);
+            resolve(false);
+          }
+        }).catch(error => {
+          console.error('Recording upload error:', error);
+          resolve(false);
+        });
+      }, 'image/jpeg', 0.7);
+    });
+  }
+
+  async function startStopRecorder(source) {
+    if (recording) {
+      await stopTracks(true);
+      clearInterval(captureInterval);
+      return;
+    }
+    recordingSource = source;
+    if (source === "stop"){
+      return;
+    }
+      
+    try {
+      if (source === "screen") {
+        const displayMediaOptions = {
+          video: {
+            cursor: "always",
+            displaySurface: "monitor",
+            mediaSource: 'screen',
+            logicalSurface: true,
+            frameRate: {ideal: 5, max: 5}
+          }, audio: false
+        };
+        captureStream = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
+      } else {
+        console.log(123123123);
+        captureStream = await navigator.mediaDevices.getUserMedia({video: true, audio: false});
+      }
+      const video = document.getElementById('video');
+      video.srcObject = captureStream;
+      video.onloadedmetadata = async () => {
+        console.log(captureStream.getVideoTracks()[0].getSettings());
+
+        recording = true;
+        share_camera.style.display = 'none';
+        share_screen.style.display = 'none';
+        share_stop.style.display = 'block';
+        action_buttons.style.display = 'none';
+        captureStream.getVideoTracks()[0].onended = stopTracks;
+        video.play();
+        screen_capture.style.display = 'block';
+        const errorBeep = document.getElementById('errorBeep');
+        const errorMessage = document.getElementById('error_message');
+        let slow_down_fps = 1;
+        let counter = 0;
+        let good_counter = 0;
+        captureInterval = setInterval(async () => {
+            counter++;
+            if (counter % slow_down_fps !== 0) {
+              console.log("Skipping frame for performance");
+              return;
+            }
+            let result = await captureScreen();
+            if (!result) {
+              good_counter = 0;
+              if (slow_down_fps < 3) {
+                slow_down_fps++;
+                console.log("Slowing down, now:", slow_down_fps);
+              } else {
+                errorBeep.play().catch(() => {
+                  console.error("Beep error: ", errorBeep.error);
+                });
+                errorMessage.style.display = 'block';
+              }
+            } else {
+              good_counter++;
+              if (good_counter > 3 && slow_down_fps > 1) {
+                slow_down_fps = slow_down_fps - 1;
+                console.log("Speeding up, now:", slow_down_fps);
+              }
+              errorMessage.style.display = 'none';
+            }
+          }, 10 * 1000  // 10 seconds
+        );
+      }
+      ;
+      const log_text = document.createElement('p');
+      log_text.textContent = 'Capturing screen...';
+    } catch
+      (err) {
+      console.error("Error: " + err);
+    }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<div class="course-card">
+    <div>
+        <div class="course-title"
+             onclick="window.location.href='/courses_teacher/{{ course.id }}/tasks'"
+        >{{ course.name }}</div>
+        <div class="course-author {% if course.teacher.username != user.username %}highlight{% endif %}">
+            by {{ course.teacher.username }}
+            {% if course.department %}
+                <br><span class="badge badge-primary"
+                          style="
+                                  color: hsl({{ course.department.color }}, 100%, 20%);
+                                  background-color: hsl({{ course.department.color }}, 100%, 80%)"
+            >{{ course.department }}</span>
+            {% endif %}
+        </div>
+        <div class="course-time">{{ course.total_time }}</div>
+        <div
+                class="enrollment-badge"
+                onclick="changeCode({{ course.id }}, '{{ course.enrollment_code }}')"
+        >Code: <span id="enrollment_code_{{ course.id }}">
+                    {{ course.enrollment_code | upper }}
+                </span>
+        </div>
+    </div>
+    <div class="card-buttons">
+        <button class="btn-icon" title="Students"
+                onclick="window.location.href='/courses_teacher/{{ course.id }}'"
+        ><i class="bi bi-people"></i> {{ course.enrolled_students }}
+        </button>
+        <button class="btn-icon" title="Tasks"
+                onclick="window.location.href='/courses_teacher/{{ course.id }}/tasks'"
+        ><i class="bi bi-clipboard"></i> {{ course.tasks_count }}
+        </button>
+        <button class="btn-icon" title="Edit"
+                onclick="window.location.href='/courses_teacher/edit/{{ course.id }}'"
+        ><i class="bi bi-pencil"></i></button>
+        <button class="btn-icon" title="Journal"
+                onclick="window.location.href='/courses_teacher/{{ course.id }}/journal'"
+        ><i class="bi bi-journal-check"></i></button>
+    </div>
+</div>

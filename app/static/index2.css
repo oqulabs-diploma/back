@@ -1,0 +1,39 @@
+body {
+    background-color: #f8f9fa;
+    padding: 20px;
+}
+
+
+.gap {
+    margin-top: 20px;
+}
+
+.center {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.center-640 {
+    max-width: 640px;
+    margin: auto;
+}
+
+.top-right {
+    margin-left: auto;
+    font-family: monospace;
+}
+
+.top-right p {
+    margin: 0;
+}
+
+#video {
+    width: 640px;
+    height: auto;
+}
+
+
+.navbar{
+    justify-content: space-between;
+}

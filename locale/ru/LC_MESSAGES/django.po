@@ -1,0 +1,272 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-03 16:33+0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
+"(n%100>=11 && n%100<=14)? 2 : 3);\n"
+
+#: app/courses_view.py:21 templates/courses_student.html:8
+#, fuzzy
+#| msgid "Course:"
+msgid "Courses"
+msgstr "Курсы"
+
+#: app/courses_view.py:22 app/courses_view.py:72
+#: templates/courses_student.html:137 templates/courses_student_tasks.html:53
+msgid "Username:"
+msgstr "Имя пользователя:"
+
+#: app/courses_view.py:23 templates/courses_student.html:138
+msgid "Your courses"
+msgstr "Ваши курсы"
+
+#: app/courses_view.py:24 templates/courses_student.html:161
+msgid "Work"
+msgstr "Работа"
+
+#: app/courses_view.py:25 templates/courses_student.html:168
+msgid "No courses found, consider creating one"
+msgstr "Курсы не найдены, рассмотрите возможность создания курса"
+
+#: app/courses_view.py:26 templates/courses_student.html:176
+msgid "Enroll to a course"
+msgstr "Записаться на курс"
+
+#: app/courses_view.py:27 templates/courses_student.html:152
+msgid "Total odo:"
+msgstr "Всего одо:"
+
+#: app/courses_view.py:28 templates/courses_student.html:154
+msgid "Ban:"
+msgstr "Бан:"
+
+#: app/courses_view.py:70 templates/courses_student_tasks.html:7
+msgid "Tasks"
+msgstr "Задание:"
+
+#: app/courses_view.py:71 app/enrollments_view.py:66
+#: templates/courses_student_tasks.html:54 templates/student.html:142
+msgid "Course:"
+msgstr "Курс:"
+
+#: app/courses_view.py:73 templates/courses_student_tasks.html:66
+msgid "Task"
+msgstr "Задание"
+
+#: app/courses_view.py:74 templates/courses_student_tasks.html:67
+msgid "Time"
+msgstr "Время"
+
+#: app/courses_view.py:75 templates/courses_student_tasks.html:68
+msgid "Progress"
+msgstr "Прогресс"
+
+#: app/courses_view.py:76 app/enrollments_view.py:71
+#: templates/courses_student_tasks.html:78 templates/student.html:153
+msgid "Inactive"
+msgstr "Неактивно"
+
+#: app/courses_view.py:77 templates/courses_student_tasks.html:92
+msgid "No tasks found"
+msgstr "Задания не найдены"
+
+#: app/enrollments_view.py:62 templates/courses_student_tasks.html:40
+#: templates/review.html:145 templates/student.html:117
+msgid "Back"
+msgstr "Назад"
+
+#: app/enrollments_view.py:63 templates/courses_student.html:127
+#: templates/courses_student_tasks.html:43 templates/review.html:148
+#: templates/student.html:120
+msgid "Log out"
+msgstr "Выйти"
+
+#: app/enrollments_view.py:64 templates/student.html:130
+msgid "Task Monitoring"
+msgstr "Мониторинг задания"
+
+#: app/enrollments_view.py:65
+msgid "INTERNET ERROR!"
+msgstr "ОШИБКА ИНТЕРНЕТА!"
+
+#: app/enrollments_view.py:67 templates/student.html:143
+msgid "Task:"
+msgstr "Задание:"
+
+#: app/enrollments_view.py:68 templates/student.html:144
+msgid "Student:"
+msgstr "Студент:"
+
+#: app/enrollments_view.py:69 templates/student.html:145
+msgid "This task:"
+msgstr "Текущее задание:"
+
+#: app/enrollments_view.py:70 templates/student.html:147
+msgid "Total:"
+msgstr "Всего:"
+
+#: app/enrollments_view.py:72 templates/student.html:159
+msgid "Share Screen"
+msgstr "Поделиться экраном"
+
+#: app/enrollments_view.py:73 templates/student.html:165
+msgid "Share Camera"
+msgstr "Поделиться камерой"
+
+#: app/enrollments_view.py:74 templates/student.html:172
+msgid "Stop Sharing"
+msgstr "Остановить трансляцию"
+
+#: app/enrollments_view.py:75 templates/student.html:177
+msgid "Instructions"
+msgstr "Инструкции"
+
+#: app/enrollments_view.py:76 templates/student.html:180
+msgid "You have to finish this task before the deadline:"
+msgstr "Вы должны завершить это задание до крайнего срока:"
+
+#: app/enrollments_view.py:77 templates/student.html:182
+msgid "You won't be able to submit your work after the deadline."
+msgstr "Вы не сможете отправить свою работу после истечения срока."
+
+#: app/enrollments_view.py:78 templates/student.html:196
+msgid "Send Images"
+msgstr "Отправить изображения"
+
+#: sms/settings.py:159 templates/courses_student_tasks.html:33
+#: templates/review.html:138 templates/student.html:110
+msgid "Kazakh"
+msgstr "Казахский"
+
+#: sms/settings.py:160 templates/courses_student_tasks.html:31
+#: templates/review.html:136 templates/student.html:108
+msgid "English"
+msgstr "Английский"
+
+#: sms/settings.py:161 templates/courses_student_tasks.html:32
+#: templates/review.html:137 templates/student.html:109
+msgid "Russian"
+msgstr "Русский"
+
+#: templates/courses_student_tasks.html:61
+msgid "N"
+msgstr ""
+
+#: templates/enroll.html:8 templates/enroll.html:19
+msgid "Enroll to course"
+msgstr "Записаться на курс"
+
+#: templates/enroll.html:23
+msgid "Enrollment Code"
+msgstr "Записаться на курс"
+
+#: templates/enroll.html:34
+msgid "Please make sure you are at the right server. Currently, you are at"
+msgstr ""
+"Пожалуйста, убедитесь, что вы находитесь на правильном сервере. В данный "
+"момент вы находитесь на"
+
+#: templates/enroll.html:41
+msgid "Enroll"
+msgstr "Записаться"
+
+#: templates/enroll.html:47
+msgid "Ask your teacher for the enrollment code."
+msgstr "Спросите у вашего учителя код зачисления."
+
+msgid "Check your images before sending"
+msgstr "Проверьте изображения перед отправкой"
+
+msgid "Instructions for Working with Screenshots"
+msgstr "Инструкции по работе со скриншотами"
+
+msgid "Viewing Screenshots:"
+msgstr "Просмотр скриншотов:"
+
+msgid ""
+"Use the player located on the left side of the screen to carefully review "
+"all the screenshots of your work."
+msgstr ""
+"Используйте проигрыватель, расположенный слева на экране, чтобы внимательно "
+"просмотреть все скриншоты вашей работы."
+
+msgid "Selecting Relevant Images:"
+msgstr "Выбор нужных изображений:"
+
+msgid "Keep only those screenshots that accurately reflect the completed work."
+msgstr "Оставьте только те скриншоты, которые точно отражают выполненную работу."
+
+msgid "Deleting Unnecessary Screenshots:"
+msgstr "Удаление ненужных скриншотов:"
+
+msgid "Remove unwanted images using the Delete button."
+msgstr "Удалите ненужные изображения, используя кнопку \"Удалить\"."
+
+msgid "Attaching the Work File:"
+msgstr "Прикрепление файла с работой:"
+
+msgid ""
+"If required, attach the file containing your completed work using the "
+"provided form."
+msgstr ""
+"Если необходимо, прикрепите файл с выполненной работой, используя "
+"предоставленную форму."
+
+msgid "Sending the Completed Work:"
+msgstr "Отправка выполненной работы:"
+
+msgid ""
+"After making your selections, be sure to send your work by clicking the "
+"Share Work button."
+msgstr ""
+"После выбора необходимых файлов, обязательно отправьте свою работу, "
+"нажав на кнопку \"Отправить работу\"."
+
+msgid "Upload File"
+msgstr "Загрузить файл"
+
+msgid "You can't attach files right now, deadline is over"
+msgstr "Вы не можете прикреплять файлы сейчас, срок истёк"
+
+msgid "Uploading file"
+msgstr "Загрузка файла"
+
+msgid "Download:"
+msgstr "Скачать:"
+
+msgid "Delete"
+msgstr "Удалить"
+
+msgid "Continue working"
+msgstr "Продолжить работу"
+
+#: templates/review.html:198
+msgid "Share work"
+msgstr "Поделиться экраном"
+
+#~ msgid "Change"
+#~ msgstr "Изменить"
+
+#~ msgid "Change Language"
+#~ msgstr "Изменить язык"
+
+#~ msgid "Student Dashboard"
+#~ msgstr "Панель студента"
+
+#~ msgid "Welcome to your dashboard!"
+#~ msgstr "Добро пожаловать в вашу панель!"

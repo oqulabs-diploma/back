@@ -1,0 +1,72 @@
+{% extends "main.html" %}
+{% block title %}All Students{% endblock %}
+{% block content %}
+    <div class="container">
+        <h1 class="mt-4 text-center">All Students</h1>
+
+        <div class="input-group mb-3 w-50 mx-auto">
+            <input type="text" id="search" class="form-control" placeholder="Search by name or email">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Courses</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="students-table">
+                    {% for student in students %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ student.full_name }}</td>
+                        <td><span class="badge bg-secondary">{{ student.email }}</span></td>
+                        <td>
+                            {% for course in student.courses %}
+                                <a href="/courses_teacher/{{ course.id }}" class="badge bg-warning text-dark">
+                                    {{ course.name }}
+                                </a>
+                                {% if not forloop.last %}, {% endif %}
+                            {% empty %}
+                                <span class="text-muted">No courses</span>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% if student.enrollment_id %}
+                                <a href="/enrollments/{{ student.enrollment_id }}" class="btn btn-sm btn-info">Tasks</a>
+                            {% else %}
+                                <span class="text-muted">No tasks</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">No students found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+   
+    document.getElementById("search").addEventListener("keyup", function() {
+        let searchText = this.value.toLowerCase();
+        let rows = document.querySelectorAll("#students-table tr");
+
+        rows.forEach(row => {
+            let name = row.cells[1].textContent.toLowerCase();
+            let email = row.cells[2].textContent.toLowerCase();
+            row.style.display = (name.includes(searchText) || email.includes(searchText)) ? "" : "none";
+        });
+    });
+</script>
+{% endblock %}

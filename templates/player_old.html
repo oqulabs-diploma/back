@@ -1,0 +1,181 @@
+<style>
+    .timebar {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        width: 100%;
+        padding: 0.5rem;
+    }
+
+    .timebar_element {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 0.25rem;
+        padding: 0.5rem;
+        font-size: 0.5em;
+    }
+
+    .timebar_element_selected {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .card {
+        max-width: 640px;
+    }
+</style>
+
+<div class="timebar">
+    <div class="timebar_element play" onclick="play_button()">
+        <span>Play</span>
+    </div>
+    {% for screenshot in screenshots %}
+        <div class="timebar_element" id="timebar_element_{{ screenshot.id }}"
+             onclick="show_screenshot_id({{ screenshot.id }})">
+            {{ screenshot.time }}
+        </div>
+    {% endfor %}
+</div>
+
+<div class="card" id="card_id">
+    <img src="..." id="current_img" class="card-img-top" alt="...">
+    <div class="card-body">
+        <h5 class="card-title" id="current_at_minute">...</h5>
+        <p class="card-text" id="current_created_at">...</p>
+        {% if is_track %}
+            <button onclick="deleteScreenshot({{ screenshot.id }})" class="btn btn-danger btn-sm">Delete</button>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    let screenshots = [
+        {% for screenshot in screenshots %}
+            {
+                id: {{ screenshot.id }},
+            {% if screenshot.sent_to_s3 %}
+                image_url: "{{ screenshot.screenshot }}",
+            {% else %}
+                image_url: "/{{ screenshot.screenshot }}",
+            {% endif %}
+                at_minute: "{{ screenshot.time }}",
+                created_at: "{{ screenshot.created_at }}"
+            },
+        {% endfor %}
+    ];
+    if (screenshots.length === 0) {
+        document.getElementById('current_img').src = "";
+        document.getElementById('current_at_minute').innerHTML = "";
+        document.getElementById('current_created_at').innerHTML = "";
+        document.getElementById('card_id').innerHTML = "No screenshots";
+    }
+    let current_screenshot_index = 0;
+    let current_img = document.getElementById('current_img');
+    let current_at_minute = document.getElementById('current_at_minute');
+    let current_created_at = document.getElementById('current_created_at');
+    let playing = false;
+
+    function update_screenshot() {
+        return new Promise((resolve) => {
+            let time_bar_element = document.getElementById(`timebar_element_${screenshots[current_screenshot_index].id}`);
+            for (let i = 0; i < screenshots.length; i++) {
+                let element = document.getElementById(`timebar_element_${screenshots[i].id}`);
+                if (element)
+                    element.classList.remove('timebar_element_selected');
+            }
+            time_bar_element.classList.add('timebar_element_selected');
+            let current_screenshot = screenshots[current_screenshot_index];
+            current_img.onload = () => {
+                setTimeout(() => {
+                    resolve();
+                }, 100);
+            }
+            current_img.src = current_screenshot.image_url;
+            current_at_minute.innerHTML = `Work time: ${current_screenshot.at_minute}`;
+            current_created_at.innerHTML = current_screenshot.created_at;
+        });
+    }
+
+    async function play_button() {
+        playing = !playing;
+        if (playing) {
+            if (current_screenshot_index === screenshots.length - 1) {
+                current_screenshot_index = 0;
+                await update_screenshot();
+            }
+            while (playing && current_screenshot_index < screenshots.length - 1) {
+                current_screenshot_index++;
+                await update_screenshot();
+            }
+            playing = false;
+        }
+    }
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'ArrowRight') {
+            current_screenshot_index = Math.min(current_screenshot_index + 1, screenshots.length - 1);
+            update_screenshot();
+        } else if (event.key === 'ArrowLeft') {
+            current_screenshot_index = Math.max(current_screenshot_index - 1, 0);
+            update_screenshot();
+        } else if (event.key === ' ') {
+            play_button();
+        }
+    });
+
+    const show_screenshot_index = (index) => {
+        console.log(`Changing current_screenshot_index from ${current_screenshot_index} to ${index}`);
+        current_screenshot_index = index;
+        update_screenshot();
+    }
+
+    const show_screenshot_id = (id) => {
+        const index = screenshots.findIndex(screenshot => screenshot.id === id);
+        console.log(`show_screenshot_id: Found index ${index} for id ${id}`);
+        show_screenshot_index(index);
+    }
+
+    async function deleteScreenshot() {
+        const screenshot = screenshots[current_screenshot_index];
+        const response = await fetch(`/delete_screenshot/${screenshot.id}/`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        });
+        if (!response.ok) {
+            console.error('Failed to delete screenshot:', response.statusText);
+            throw new Error('Failed to delete screenshot');
+        } else {
+            console.log('Screenshot deleted:', screenshot.id);
+        }
+        const timebarElementId = `timebar_element_${screenshot.id}`;
+
+        // Удаление элемента timebar из DOM
+        const timebarElement = document.getElementById(timebarElementId);
+
+        // Обновление массива скриншотов
+        screenshots.splice(current_screenshot_index, 1);
+
+        if (timebarElement) {
+            timebarElement.remove();
+        }
+
+        // Обновление отображаемого скриншота
+        if (screenshots.length === 0) {
+            current_img.src = "";
+            current_at_minute.innerText = "";
+            current_created_at.innerText = "";
+        } else {
+            // Показ скриншота, который идет после удалённого
+            show_screenshot_index(Math.min(screenshots.length - 1, current_screenshot_index));
+        }
+
+    }
+    update_screenshot();
+</script>

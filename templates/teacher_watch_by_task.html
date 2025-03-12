@@ -1,0 +1,192 @@
+{% extends "main.html" %}
+{% block title %}Check Task{% endblock %}
+{% block content %}
+
+<div style="display: flex; flex-direction: column">
+    <div class="top-right">
+        <p>Course: {{ course.name }}</p>
+        <p>Task: {{ task.name }}</p>
+    </div>
+    <div>
+        <button class="btn btn-info"
+                onclick="check_with_ai('task', {{ task.id }})"
+                style="margin-bottom: 1em">
+            <i class="bi bi-magic"></i>
+            Check ALL with AI
+        </button>
+    </div>
+    <tr style="display: flex; justify-content: center">
+        <table class="table table-hover" id="dataTable">
+            <thead>
+            <tr>
+                <th data-sort-direction="asc">Student <span class="sort-icon"></span></th>
+                <th data-sort-direction="asc">Submission Date <span class="sort-icon"></span></th>
+                <th data-sort-direction="asc">Time Worked <span class="sort-icon"></span></th>
+                <th data-sort-direction="asc">AI <span class="sort-icon"></span></th>
+                <th data-sort-direction="asc">Status <span class="sort-icon"></span></th>
+                <th></th>
+            </tr>
+            </thead>
+        {% for enrollment_task in enrollment_tasks %}
+            <tr>
+                <td>{{ enrollment_task.enrollment.student.first_name }} {{ enrollment_task.enrollment.student.last_name }}</td>
+                <td>{% if enrollment_task.last_submission != None %}{{ enrollment_task.last_submission }}{% endif %}</td>
+                <td>
+                    {{ enrollment_task.total_time }}<br>
+                    <progress value="{{ enrollment_task.progress_num }}" max="100"></progress>
+                </td>
+                <td>
+                    {% if enrollment_task.ai_request %}
+                        <i class="bi bi-magic" style="color: green"></i>
+                        {% if enrollment_task.ai_ready %}
+                            <span class="hover-box">
+                                {{ enrollment_task.ai_score }}
+                                <div class="hover-text">{{ enrollment_task.ai_note }}</div>
+                            </span>
+                        {% else %}
+                            <span><i class="bi bi-arrow-repeat" style="color: green"></i></span>
+                        {% endif %}
+                    {% else %}
+                        <button class="btn btn-sm btn-info"
+                                onclick="check_with_ai('enrollment_task',{{ enrollment_task.id }})">
+                            <i class="bi bi-magic"></i> Check
+                        </button>
+                    {% endif %}
+                </td>
+                <td>{{ enrollment_task.progress }}</td>
+                {% if enrollment_task.last_shared_id > 0  %}
+                    <td>
+                        <a href="/watch/{{ enrollment_task.id }}" class="btn btn-sm
+                        {% if enrollment_task.watched %}
+                            btn-info
+                        {% else %}
+                            btn-primary
+                        {% endif %}" style="margin-left: auto">
+                            <i class="bi bi-eye"></i> Watch
+                            {% if enrollment_task.watched %}
+                                <i class="bi bi-check-all"></i>
+                            {% endif %}
+                        </a>
+                    </td>
+                {% else %}
+                    <td></td>
+                {% endif %}
+            </tr>
+        {% empty %}
+            <div style="margin-top: 2em; background-color: whitesmoke; text-align: center; width: auto">
+                The student did not work on this course yet.
+            </div>
+        {% endfor %}
+        </table>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const table = document.getElementById("dataTable");
+    if (!table) return;
+    const headers = table.querySelectorAll("th");
+
+    headers.forEach((header, index) => {
+        header.style.cursor = "pointer";
+        header.addEventListener("click", function() {
+            let sortDirection = header.getAttribute("data-sort-direction") || "asc";
+            sortDirection = sortDirection === "asc" ? "desc" : "asc";
+            header.setAttribute("data-sort-direction", sortDirection);
+
+            headers.forEach(hdr => {
+                let iconSpan = hdr.querySelector(".sort-icon");
+                if (iconSpan) {
+                    if (hdr !== header) {
+                        iconSpan.innerHTML = "";
+                    }
+                }
+            });
+
+            let iconSpan = header.querySelector(".sort-icon");
+            if (iconSpan) {
+                iconSpan.innerHTML = sortDirection === "asc"
+                    ? '<i class="bi bi-caret-up-fill"></i>'
+                    : '<i class="bi bi-caret-down-fill"></i>';
+            }
+            sortTableByColumn(table, index, sortDirection);
+        });
+    });
+});
+
+function sortTableByColumn(table, columnIndex, direction) {
+    const tbody = table.tBodies[0] || table;
+    let rows = Array.from(tbody.querySelectorAll("tr"));
+
+    if (!table.tBodies.length) {
+        rows = rows.slice(1);
+    }
+
+    rows.sort((rowA, rowB) => {
+        const cellA = rowA.querySelectorAll("td")[columnIndex]?.textContent.trim();
+        const cellB = rowB.querySelectorAll("td")[columnIndex]?.textContent.trim();
+
+        if (columnIndex === 1) {
+            return compareDates(cellA, cellB, direction);
+        }
+
+        if (cellA < cellB) return direction === "asc" ? -1 : 1;
+        if (cellA > cellB) return direction === "asc" ? 1 : -1;
+        return 0;
+    });
+
+    rows.forEach(row => tbody.appendChild(row));
+}
+
+function compareDates(dateA, dateB, direction) {
+
+    const parsedDateA = parseCustomDate(dateA);
+    const parsedDateB = parseCustomDate(dateB);
+
+    if (parsedDateA < parsedDateB) return direction === "asc" ? -1 : 1;
+    if (parsedDateA > parsedDateB) return direction === "asc" ? 1 : -1;
+    return 0;
+}
+
+function parseCustomDate(dateString) {
+    if (!dateString) return new Date(0);
+
+    dateString = dateString.replace(/,/g, '').trim();
+
+    const dateParts = dateString.split(' ');
+
+    if (dateParts.length < 4) return new Date(0);
+
+    const months = {
+        "Jan.": 0, "Feb.": 1, "Mar.": 2, "Apr.": 3, "May": 4, "Jun.": 5,
+        "Jul.": 6, "Aug.": 7, "Sep.": 8, "Oct.": 9, "Nov.": 10, "Dec.": 11
+    };
+
+    const month = months[dateParts[0]];
+    const day = parseInt(dateParts[1]);
+    const year = parseInt(dateParts[2]);
+
+    let hours = 0, minutes = 0;
+
+    if (dateParts[3].toLowerCase() === "midnight") {
+        hours = 0;
+        minutes = 0;
+    } else if (dateParts[3].toLowerCase() === "noon") {
+        hours = 12;
+        minutes = 0;
+    } else {
+        let [hourStr, minuteStr] = dateParts[3].split(':');
+        hours = parseInt(hourStr);
+        minutes = parseInt(minuteStr);
+
+        const isPM = dateParts[4].toLowerCase() === "p.m.";
+        if (isPM && hours !== 12) hours += 12;
+        if (!isPM && hours === 12) hours = 0;
+    }
+
+    return new Date(year, month, day, hours, minutes);
+}
+
+
+</script>
+
+{% endblock %}

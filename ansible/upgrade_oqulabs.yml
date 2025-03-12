@@ -1,0 +1,59 @@
+---
+- hosts: webservers
+  become: true  # Run as root (equivalent to `sudo -i`)
+
+  tasks:
+    - name: Change to the /var/www/oqulabs directory and git pull
+      ansible.builtin.command: "git pull"
+      args:
+        chdir: /var/www/oqulabs
+      register: git_pull_result
+
+    - name: Show git pull output
+      ansible.builtin.debug:
+        var: git_pull_result.stdout
+
+    - name: Run pip install inside virtual environment
+      ansible.builtin.shell: "bash -c 'venv/bin/pip install -r requirements.txt'"
+      args:
+        chdir: /var/www/oqulabs
+      environment:
+        PATH: "/var/www/oqulabs/venv/bin:{{ ansible_env.PATH }}"  # Ensures venv is used
+      register: pip_install_result
+
+    - name: Show pip install output
+      ansible.builtin.debug:
+        var: pip_install_result.stdout
+
+    - name: Run Django migrations inside virtual environment
+      ansible.builtin.shell: "bash -c 'source venv/bin/activate && python manage.py migrate'"
+      args:
+        chdir: /var/www/oqulabs
+      environment:
+        PATH: "/var/www/oqulabs/venv/bin:{{ ansible_env.PATH }}"  # Ensures venv is used
+      ignore_errors: false  # Ensures playbook halts if there's an issue
+      register: migrate_result
+
+    - name: Show migrate output
+      ansible.builtin.debug:
+        var: migrate_result.stdout
+
+    - name: Collect static files inside virtual environment
+      ansible.builtin.shell: "bash -c 'source venv/bin/activate && python manage.py collectstatic --noinput'"
+      args:
+        chdir: /var/www/oqulabs
+      environment:
+        PATH: "/var/www/oqulabs/venv/bin:{{ ansible_env.PATH }}"
+      register: collectstatic_result
+
+    - name: Show migrate output
+      ansible.builtin.debug:
+        var: collectstatic_result.stdout
+
+    - name: Restart all supervisors
+      ansible.builtin.command: "supervisorctl restart all"
+      register: restart_oqulabs_result
+
+    - name: Show restart output for oqulabs
+      ansible.builtin.debug:
+        var: restart_oqulabs_result.stdout

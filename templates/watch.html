@@ -1,0 +1,116 @@
+{% extends "main.html" %}
+{% block title %}Tasks{% endblock %}
+{% block content %}
+    <div style="display: flex; flex-direction: column;">
+
+        <div class="top-right">
+            <p>
+                Course: {{ enrollment.course.name }}
+            </p>
+            <p>
+                <a href="/enrollments/{{ enrollment.id }}">
+                Student: {{ enrollment.student.first_name }} {{ enrollment.student.last_name }}
+                </a>
+            </p>
+            <p>
+                <a href="/watch_by_task/{{ enrollment_task.task.id }}">
+                Task: {{ enrollment_task.task.name }}
+                </a>
+            </p>
+        </div>
+        {% if enrollment_task.mark_as_done %}
+        <div class="timebar">
+            {% if not enrollment_task.accepted %}
+            <button class="btn btn-sm btn-success" onclick="accept_this_task()">Accept</button>
+            {% if enrollment_task.marked_as_done %}
+            <button class="btn btn-sm btn-danger" style="margin-left: 1em" onclick="undo_this_task()">Reject</button>
+            <p style="margin-left: 1em; background-color: yellow">This task is marked as Done by student!</p>
+            {% endif %}
+            {% else %}
+            <button class="btn btn-sm btn-danger" onclick="return_to_work()">Return to work</button>
+            {% endif %}
+        </div>
+        {% endif %}
+        <div class="timebar">
+            <button class="btn btn-sm btn-danger" onclick="note()">Note: {{ enrollment_task.note }}</button>
+{#            <span style="margin-left: 20px">Banned: {{ enrollment_task.total_time_ban }}</span>#}
+        </div>
+        {% if enrollment_task.ai_ready %}
+        <div style="display: flex; flex-direction: row">
+            <i class="bi bi-magic" style="color: green"></i> <span>{{ enrollment_task.ai_note }}</span>
+        </div>
+        {% endif %}
+
+        {% include 'player.html' %}
+    </div>
+{% endblock %}
+{% block scripts %}
+        <script src="/static/player.js"></script>
+        <script>
+            const ban = async () => {
+                let enrollment_task_id = {{ enrollment_task.id }};
+                let minutes = prompt('How many minutes to ban?');
+                minutes = parseInt(minutes);
+                let result;
+                if (minutes > 0) {
+                    result = await fetch(`/enrollment_tasks/${enrollment_task_id}/ban/${minutes}`);
+                } else {
+                    result = await fetch(`/enrollment_tasks/${enrollment_task_id}/unban/${-minutes}`);
+                }
+                if (result.ok) {
+                    location.reload();
+                } else {
+                    alert('Error');
+                }
+            }
+
+            const accept_this_task = async () => {
+                let enrollment_task_id = {{ enrollment_task.id }};
+                let result = await fetch(`/enrollment_tasks/${enrollment_task_id}/accept/`, { method: 'POST' });
+                if (result.ok) {
+                    window.location.href = `/enrollments/{{ enrollment.id }}`;
+                } else {
+                    alert('Error');
+                }
+            }
+
+            const return_to_work = async () => {
+                let enrollment_task_id = {{ enrollment_task.id }};
+                let result = await fetch(`/enrollment_tasks/${enrollment_task_id}/unaccept/`, { method: 'POST' });
+                if (result.ok) {
+                    window.location.href = `/enrollments/{{ enrollment.id }}`;
+                } else {
+                    alert('Error');
+                }
+            }
+
+            const undo_this_task = async () => {
+                let enrollment_task_id = {{ enrollment_task.id }};
+                let result = await fetch(`/enrollment_tasks/${enrollment_task_id}/undone/`, { method: 'POST' });
+                if (result.ok) {
+                    window.location.href = `/enrollments/{{ enrollment.id }}`;
+                } else {
+                    alert('Error');
+                }
+            }
+
+            const note = () => {
+                let old_note = `{{ enrollment_task.note }}`;
+                let new_note = prompt("Note:", old_note);
+                if (new_note === null)
+                    return
+                if (new_note !== old_note)
+                    make_note(new_note);
+            }
+
+            const make_note = async (new_note) => {
+                await fetch(
+                    `/enrollment_tasks/{{ enrollment_task.id }}/note/`,
+                    { method: 'POST',
+                        body: new_note,
+                    }
+                );
+                window.location.reload();
+            };
+        </script>
+{% endblock %}

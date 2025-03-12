@@ -1,0 +1,36 @@
+{% extends "main.html" %}
+{% block title %}Your Courses{% endblock %}
+{% block content %}
+<div class="" style="display: flex; flex-direction: column">
+    <div style="display: flex; flex-direction: row">
+        <div>
+            <a href="?to_excel=1" download class="btn btn-info btn-outline-light">Export</a>
+        </div>
+    <div class="top-right">
+        <p>{{ course.name }} </p>
+        <p>{{ course.enrolled_students }}
+            students</p>
+    </div>
+    </div>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            {% for col in header %}
+                <th scope="col">{{ col }}</th>
+            {% endfor %}
+        </tr>
+        </thead>
+        {% for line in journal_lines %}
+            <tr>
+                {% for col in line %}
+                    <td>{{ col }}</td>
+                {% endfor %}
+            </tr>
+        {% empty %}
+            <div style="margin-top: 2em; background-color: whitesmoke; text-align: center; width: auto">
+                No students enrolled to the course. Use this code to invite the student: {{ course.enrollment_code }}
+            </div>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

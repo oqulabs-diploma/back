@@ -1,0 +1,154 @@
+<!-- Sidebar -->
+<ul class="navbar-nav bg-gray-200 sidebar sidebar-light accordion" id="accordionSidebar"
+    style="overflow-x: hidden; height: 100vh">
+    <!-- Sidebar - Brand -->
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
+        <div class="sidebar-brand-icon">
+            <img src="/static/casting.svg" style="max-height: 20px; margin-left: 1em">
+        </div>
+        <div class="sidebar-brand-text mx-3">OquLabs</div>
+    </a>
+    <div class="nav-item dropdown no-arrow" style="display: flex; flex-direction: column; width: 100%">
+        <span class="mr-2 d-none d-lg-inline text-gray-600 small"
+              style="text-align: center">{{ user.username }}</span>
+        <!-- Dropdown - User Information -->
+        <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+             aria-labelledby="userDropdown">
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="/logout" data-toggle="modal" data-target="#logoutModal">
+                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                Выйти
+            </a>
+        </div>
+    </div>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider my-0">
+
+    <!-- Nav Item - Dashboard -->
+{#    <li class="nav-item {% if filename == "index" %}active{% endif %}">#}
+{#        <a class="nav-link" href="/">#}
+{#            <i class="fas fa-fw fa-tachometer-alt"></i>#}
+{#            <span>Dashboard</span></a>#}
+{#    </li>#}
+
+{#    <li class="nav-item {% if menu == 'tests' %}active{% endif %}">#}
+        <div style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+        ">
+        <a class="btn btn-sm
+        {% if page == "all_courses" %}
+        btn-primary
+        {% else %}
+        btn-light
+        {% endif %}
+        "
+           style="width: 100%"
+           href="/courses_teacher">
+            <i class="fas fa-fw fa-check-square"></i>
+            <span>All courses</span>
+        </a>
+        </div>
+        <div style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+        ">
+            <a class="btn btn-sm
+            {% if page == 'all_students' %}
+            btn-primary
+            {% else %}
+            btn-light
+            {% endif %}
+            "
+            style="width: 100%"
+            href="/all_students">
+                <i class="fas fa-fw fa-check-square"></i>
+                <span>All Students</span>
+            </a>
+        </div>
+        <div style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+        ">
+        <a class="btn btn-sm
+        {% if page == 'reports' %}
+        btn-primary
+        {% else %}
+        btn-light
+        {% endif %}
+        "
+           style="width: 100%"
+           href="/reports">
+            <i class="fas fa-fw fa-check-square"></i>
+            <span>Reports</span>
+        </a>
+        </div>
+{#    </li>#}
+    <hr class="sidebar-divider">
+
+    {% for course1 in courses %}
+        <hr class="sidebar-divider">
+
+        <div class="sidebar-heading" id="menu_{{ course1.id }}" style="text-align: center">
+            {{ course1.name | slice:":25" }} <a href="/courses_teacher/edit/{{ course1.id }}"
+               style="width: 100%">&nbsp;&nbsp;<i class="bi bi-pencil-fill"></i> </a>
+        </div>
+
+        <div style="display: flex; flex-direction: column; align-items: center; padding: 10px;">
+            <a href="/courses_teacher/{{ course1.id }}/tasks" class="btn btn-sm
+            {% if course1.id == course.id and page == 'tasks' %}
+            btn-primary
+            {% else %}
+            btn-light
+            {% endif %}
+            "
+               style="width: 100%; text-align: left"><i class="bi bi-list-check"></i> Tasks
+                ({{ course1.tasks_number }})
+            </a>
+            <a href="/courses_teacher/{{ course1.id }}" class="btn btn-sm
+            {% if course1.id == course.id and page == 'enrollments' %}
+            btn-primary
+            {% else %}
+            btn-light
+            {% endif %}
+                "
+               style="width: 100%; text-align: left"><i class="bi bi-people"></i> Students
+                ({{ course1.enrolled_students }})</a>
+            <a href="/courses_teacher/{{ course1.id }}/journal" class="btn btn-sm
+            {% if course1.id == course.id and page == 'journal' %}
+            btn-primary
+            {% else %}
+            btn-light
+            {% endif %}
+            "
+               style="width: 100%; text-align: left"><i class="bi bi-journal-check"></i> Journal
+
+            </a>
+        </div>
+    {% endfor %}
+
+    <!-- Nav Item - Pages Collapse Menu -->
+    <!-- Divider -->
+    <hr class="sidebar-divider">
+
+    <!-- Heading -->
+    <div class="sidebar-heading">
+        Other
+    </div>
+
+    <!-- Nav Item - Charts -->
+    <li class="nav-item">
+        <a class="nav-link " href="/logout">
+            <i class="fas fa-fw fa-chart-area"></i>
+            <span>Logout</span></a>
+    </li>
+
+</ul>
+<!-- End of Sidebar -->
