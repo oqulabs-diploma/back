@@ -63,6 +63,7 @@ urlpatterns = [
     path(settings.TEACHER_REGISTRATION_URL, views.teacher_registration, name='teacher_registration'),
     path("", views.home, name='home'),
     path('i18n/', include('django.conf.urls.i18n')),  
+
 ]
 
 urlpatterns += i18n_patterns(
