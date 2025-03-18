@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from app import views, courses_view, enrollments_view, tasks_view, journal_views, students_view
+from app import views, courses_view, enrollments_view, tasks_view, journal_views, students_view, register_view
 from app.upload_screenshot_view import upload_screenshot
 from app.upload_attachment_view import upload_attachment
 from django.conf import settings
@@ -64,6 +64,11 @@ urlpatterns = [
     path("", views.home, name='home'),
     path('i18n/', include('django.conf.urls.i18n')),  
 
+]
+
+urlpatterns += [
+    path('register2/', register_view.register_api, name='register'),
+    path('logout2/', register_view.logout_api, name='logout')
 ]
 
 urlpatterns += i18n_patterns(
