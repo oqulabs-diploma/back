@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from app.models import *
 
-
 class UserRegistrationSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True)
     first_name = serializers.CharField(required=True)
@@ -29,3 +28,22 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+    
+class EnrollmentSerializer(serializers.ModelSerializer):
+    """Serializer for the Enrollment model."""
+    student_username = serializers.CharField(source='student.username', read_only=True)
+    course_name = serializers.CharField(source='course.name', read_only=True)
+
+    class Meta:
+        model = Enrollment
+        fields = [
+            'id',
+            'student',
+            'student_username',
+            'course',
+            'course_name',
+            'total_minutes',
+            'total_ban_minutes',
+            'folder_prefix',
+            'deleted',
+        ]
