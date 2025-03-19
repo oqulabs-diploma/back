@@ -67,8 +67,7 @@ urlpatterns = [
 ]
 
 urlpatterns += [
-    path('v2/register', register_view.register_api, name='register'),
-    path('v2/logout', register_view.logout_api, name='logout')
+    path('v2/', include('v2.urls'))
 ]
 
 urlpatterns += i18n_patterns(
