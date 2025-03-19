@@ -47,3 +47,35 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             'folder_prefix',
             'deleted',
         ]
+
+class EnrollmentTaskSerializer(serializers.ModelSerializer):
+    """Serializer for the EnrollmentTask model."""
+    enrollment_id = serializers.PrimaryKeyRelatedField(source='enrollment.id', read_only=True)
+    task_id = serializers.PrimaryKeyRelatedField(source='task.id', read_only=True)
+    task_name = serializers.CharField(source='task.name', read_only=True)
+
+    class Meta:
+        model = EnrollmentTask
+        fields = [
+            'id',
+            'enrollment_id',
+            'task_id',
+            'task_name',
+            'minutes',
+            'last_hh_mm',
+            'last_submission',
+            'ban_minutes',
+            'last_shared_id',
+            'marked_as_done',
+            'under_review',
+            'accepted',
+            'score',
+            'watched',
+            'note',
+            'ai_note',
+            'ai_ready',
+            'ai_request',
+            'ai_score',
+            'ai_description',
+            'ai_used_screenshots',
+        ]
