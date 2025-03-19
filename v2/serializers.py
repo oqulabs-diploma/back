@@ -79,3 +79,25 @@ class EnrollmentTaskSerializer(serializers.ModelSerializer):
             'ai_description',
             'ai_used_screenshots',
         ]
+
+class CourseSerializer(serializers.ModelSerializer):
+    """Serializer for the Course model."""
+    teacher_username = serializers.CharField(source='teacher.username', read_only=True)
+    department_name = serializers.CharField(source='department.name', read_only=True, allow_null=True)
+
+    class Meta:
+        model = Course
+        fields = [
+            'id',
+            'teacher',
+            'teacher_username',
+            'name',
+            'description',
+            'max_screenshots_per_user',
+            'screenshot_interval_minutes',
+            'enrollment_code',
+            'deleted',
+            'color',
+            'department',
+            'department_name',
+        ]

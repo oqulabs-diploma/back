@@ -6,5 +6,6 @@ urlpatterns = [
     path('login', auth_views.login),
     path('logout', auth_views.logout_url),
     path('courses', courses_view.courses_student),
-    path('courses/<int:course_id>', courses_view.courses_student_tasks)
+    path('courses/<int:course_id>', courses_view.courses_student_tasks),
+    path('courses_teacher/add', courses_view.course_add)
 ]
