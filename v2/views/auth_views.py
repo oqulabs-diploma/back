@@ -13,7 +13,7 @@ def register(request):
     serializer = UserRegistrationSerializer(data=request.data)
     if not serializer.is_valid():
         return Response(
-            {"error": get_first_error_text(serializer.errors)},
+            {"error": serializer.errors},
             status=status.HTTP_400_BAD_REQUEST
         )
 
