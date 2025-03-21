@@ -55,6 +55,8 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+CORS_ALLOW_CREDENTIALS = True
+
 ROOT_URLCONF = "sms.urls"
 
 TEMPLATES = [
