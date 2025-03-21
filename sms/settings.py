@@ -26,9 +26,8 @@ SECRET_KEY = "django-insecure-yysf)hppy*aa2ak=az=fch!_3r(=^=67t&g-=k&bu#kmz@gy%-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", '127.0.0.1']
+ALLOWED_HOSTS = []
 
-CSRF_TRUSTED_ORIGINS = ['https://sms.commit.kz']
 
 # Application definition
 
