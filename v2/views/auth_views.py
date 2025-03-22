@@ -64,3 +64,18 @@ def login(request):
         )
 
     return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def teacher_registration(request):
+    """API endpoint to register a new teacher."""
+    serializer = UserRegistrationSerializer(data=request.data)
+
+    if not serializer.is_valid():
+        return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+    user = serializer.save()
+    user.is_staff = True
+    user.save()
+
+    return Response({"detail": "Teacher registered successfully."}, status=status.HTTP_201_CREATED)
