@@ -35,19 +35,31 @@ def login(request):
     password = request.data.get("password")
 
     User = get_user_model()
-    
+
     try:
-        user = User.objects.get(email=email)  # Найдём пользователя по email
+        user = User.objects.get(email=email)
     except User.DoesNotExist:
         return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
-    user = authenticate(username=user.username, password=password)  # Теперь логинимся по username
+    user = authenticate(username=user.username, password=password)
     if user is not None:
         from rest_framework_simplejwt.tokens import RefreshToken
 
         refresh = RefreshToken.for_user(user)
+
+        if user.is_superuser:
+            role = 'admin'
+        elif user.is_staff:
+            role = 'teacher'
+        else:
+            role = 'student'
+
         return Response(
-            {"refresh": str(refresh), "access": str(refresh.access_token)},
+            {
+                "refresh": str(refresh),
+                "access": str(refresh.access_token),
+                "role": role,
+            },
             status=status.HTTP_200_OK,
         )
 
